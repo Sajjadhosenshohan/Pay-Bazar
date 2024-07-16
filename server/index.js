@@ -16,7 +16,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-console.log(process.env.DB_USER, process.env.DB_PASS)
+// console.log(process.env.DB_USER, process.env.DB_PASS)
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ejfr6xk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -36,6 +36,8 @@ async function run() {
 
         app.post("/loginUser", async (req, res) => {
             const info = req.body;
+
+            console.log(info)
             if (info.phone) {
                 info.phone = info.phone.toString(); // Ensure phone number is a string
             }
@@ -46,7 +48,7 @@ async function run() {
 
         app.get('/singleUser', async (req, res) => {
             const { identifier, pin } = req.query; // Changed from req.params to req.query
-            console.log(typeof identifier);
+            // console.log(typeof identifier);
 
             const user = await usersCollection.findOne({
                 $or: [{ email: identifier }, { phone: identifier }],
