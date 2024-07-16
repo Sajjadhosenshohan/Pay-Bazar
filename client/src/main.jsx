@@ -7,10 +7,12 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Dashboard from './pages/Dashboard';
+// import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AuthProvider from './Auth/AuthProvider';
+import SendMoney from './pages/SendMoney';
+import CashOutForm from './pages/CashOutForm';
 
 const router = createBrowserRouter([
   {
@@ -18,16 +20,22 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
-        element: <Dashboard />
-      },
-      {
         path: "/login",
         element: <Login />
       },
       {
         path: "/register",
         element: <Register />
+      },
+
+      {
+        path: "/send-money",
+        element: <SendMoney />
+      },
+
+      {
+        path: "/cashOut",
+        element: <CashOutForm />
       },
     ]
 

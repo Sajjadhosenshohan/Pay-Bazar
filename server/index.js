@@ -1,5 +1,5 @@
 const express = require('express');
-require('dotenv').config()
+require('dotenv').config();
 const app = express();
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -11,12 +11,10 @@ const corsOptions = {
         "http://localhost:5174",
     ],
     credentials: true,
-}
+};
 
 app.use(cors(corsOptions));
 app.use(express.json());
-
-// console.log(process.env.DB_USER, process.env.DB_PASS)
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ejfr6xk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -33,42 +31,157 @@ async function run() {
         await client.connect();
 
         const usersCollection = client.db('users').collection('singleUser');
+        const paymentsCollection = client.db("users").collection("payments");
 
         app.post("/loginUser", async (req, res) => {
             const info = req.body;
-
-            console.log(info)
             if (info.phone) {
                 info.phone = info.phone.toString(); // Ensure phone number is a string
             }
-            const result = await usersCollection.insertOne(info);
-            res.send(result);
+            try {
+                const result = await usersCollection.insertOne(info);
+                res.send(result);
+            } catch (error) {
+                console.error('Error inserting user:', error);
+                res.status(500).send('Internal Server Error');
+            }
         });
-        
 
         app.get('/singleUser', async (req, res) => {
             const { identifier, pin } = req.query; // Changed from req.params to req.query
-            // console.log(typeof identifier);
-
-            const user = await usersCollection.findOne({
-                $or: [{ email: identifier }, { phone: identifier }],
-                pin: pin
-            });
-
-            res.send(user)
-
+            try {
+                const user = await usersCollection.findOne({
+                    $or: [{ email: identifier }, { phone: identifier }],
+                    pin: pin
+                });
+                res.send(user);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                res.status(500).send('Internal Server Error');
+            }
         });
 
+        app.post('/sendMoney', async (req, res) => {
+            const { recipientPhone, amount, senderPhone, pin } = req.body;
+
+            if (amount < 50) {
+                return res.status(400).json({ success: false, message: "Minimum amount to send is 50 Taka." });
+            }
+
+            try {
+                const senderAccount = await usersCollection.findOne({ phone: senderPhone });
+                if (!senderAccount) {
+                    return res.status(404).json({ success: false, message: "Sender not found." });
+                }
+
+                if (senderAccount.pin !== pin) {
+                    return res.status(401).json({ success: false, message: "Invalid PIN." });
+                }
+
+                const recipientAccount = await usersCollection.findOne({ phone: recipientPhone });
+                if (!recipientAccount) {
+                    return res.status(404).json({ success: false, message: "Recipient not found." });
+                }
+
+                let fee = 0;
+                if (amount > 100) {
+                    fee = 5;
+                }
+
+                if (senderAccount.balance < amount + fee) {
+                    return res.status(400).json({ success: false, message: "Insufficient balance." });
+                }
+
+                await usersCollection.updateOne(
+                    { phone: senderPhone },
+                    { $inc: { balance: -(amount + fee) } }
+                );
+
+                await usersCollection.updateOne(
+                    { phone: recipientPhone },
+                    { $inc: { balance: amount } }
+                );
+
+                const payment = {
+                    senderPhone,
+                    recipientPhone,
+                    amount,
+                    fee,
+                    date: new Date(),
+                };
+
+                await paymentsCollection.insertOne(payment);
+
+                res.status(200).json({ success: true, message: "Money sent successfully." });
+            } catch (error) {
+                console.error('Error sending money:', error);
+                res.status(500).json({ success: false, message: "Server error." });
+            }
+        });
+
+
+        // cash out
+
+        app.post('/cashOut', async (req, res) => {
+            const { amount, pin, phone, name } = req.body;
+
+            console.log(amount, pin, phone, name)
+
+            if (amount < 50) {
+                return res.status(400).json({ success: false, message: "Minimum amount to send is 50 Taka." });
+            }
+
+            const user = await usersCollection.findOne({ phone: phone, name: name });
+            if (!user) {
+                return res.status(404).json({ success: false, message: "User not found or invalid PIN." });
+            }
+
+            // const isPinValid = await bcrypt.compare(pin, user.pin);
+            // if (!isPinValid) {
+            //     return res.status(401).json({ success: false, message: "Invalid PIN." });
+            // }
+
+            if (user.pin !== pin) {
+                return res.status(401).json({ success: false, message: "Invalid PIN." });
+            }
+
+            // const agent = await usersCollection.findOne({ role: 'user' });
+            // if (!agent) {
+            //     return res.status(404).json({ success: false, message: "user not found." });
+            // }
+
+            const fee = amount * 0.015;
+            const totalDeduction = amount + fee;
+
+            if (user.balance < totalDeduction) {
+                return res.status(400).json({ success: false, message: "Insufficient balance." });
+            }
+
+            await usersCollection.updateOne(
+                { phone: phone },
+                { $inc: { balance: -totalDeduction } }
+            );
+
+            await usersCollection.updateOne(
+                { phone: user.phone },
+                { $inc: { balance: fee } }
+            );
+
+            res.status(200).json({ success: true, message: 'Cash out successful' });
+        });
+
+
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-        // Do not close the client connection here to keep the server running
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
     }
 }
+
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
     res.send("my assets is running");
-})
+});
 
 app.listen(port, () => {
     console.log(`My assets is running on port ${port}`);
