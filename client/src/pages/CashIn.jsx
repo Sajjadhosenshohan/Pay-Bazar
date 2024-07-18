@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { AuthContext } from '../Auth/AuthProvider';
 import useAxiosPublic from '../Hooks/useAxiosPublic';
-
+import Swal from 'sweetalert2'
 const CashInForm = () => {
     const [amount, setAmount] = useState('');
     const [pin, setPin] = useState('');
@@ -15,14 +15,24 @@ const CashInForm = () => {
         e.preventDefault();
 
         try {
-            const response = await axiosPublic.put('/cashIn', { 
+            const response = await axiosPublic.patch('/CashInUserRequest', { 
                 amount, 
                 pin, 
                 phone: user?.phone,
                 name: user?.name,
                 agentPhone
             });
-            setMessage(response.data.message);
+            console.log(response.data);
+
+            if(response.data.modifiedCount){
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Your work has been saved",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+            }
         } catch (error) {
             if (error.response) {
                 setMessage(error.response.data.message);
