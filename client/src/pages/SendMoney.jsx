@@ -42,38 +42,38 @@ const SendMoney = () => {
     };
 
     return (
-        <section className="dark:bg-gray-900">
+        <section className="bg-gray-900">
             <div className="flex justify-center items-center min-h-screen">
                 <div className="bg-gray-200 flex items-center w-full max-w-2xl p-8 mx-auto lg:px-12 lg:w-3/5">
                     <form onSubmit={handleSendMoney} className="w-full py-20">
-                        <h1 className="text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
+                        <h1 className="text-2xl font-semibold tracking-wider text-gray-800 capitalize text-white">
                             Send Money
                         </h1>
 
-                        <p className="mt-4 text-gray-500 dark:text-gray-400">
+                        <p className="mt-4 text-gray-500 text-gray-400">
                             Enter the recipient &apos; s details and the amount you want to send.
                         </p>
 
                         <div>
                             <div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Recipient Phone</label>
-                                    <input name="recipientPhone" type="text" placeholder="Recipient's Phone Number" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm text-gray-600 text-gray-200">Recipient Phone</label>
+                                    <input name="recipientPhone" type="text" placeholder="Recipient's Phone Number" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg placeholder-gray-600 bg-gray-900 text-gray-300 border-gray-700 focus:border-blue-400 focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
 
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Amount</label>
-                                    <input name="amount" type="number" placeholder="Amount to send" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm text-gray-600 text-gray-200">Amount</label>
+                                    <input name="amount" type="number" placeholder="Amount to send" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg placeholder-gray-600 bg-gray-900 text-gray-300 border-gray-700 focus:border-blue-400 focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
 
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Sender Phone</label>
-                                    <input name="senderPhone" type="text" defaultValue={storedUser?.phone} placeholder="Your Phone Number" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm text-gray-600 text-gray-200">Sender Phone</label>
+                                    <input name="senderPhone" type="text" defaultValue={storedUser?.phone} placeholder="Your Phone Number" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg placeholder-gray-600 bg-gray-900 text-gray-300 border-gray-700 focus:border-blue-400 focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
 
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">PIN</label>
-                                    <input name="pin" type="password" placeholder="Your PIN" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm text-gray-600 text-gray-200">PIN</label>
+                                    <input name="pin" type="password" placeholder="Your PIN" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg placeholder-gray-600 bg-gray-900 text-gray-300 border-gray-700 focus:border-blue-400 focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
                             </div>
 

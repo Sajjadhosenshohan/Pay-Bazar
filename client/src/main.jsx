@@ -13,6 +13,8 @@ import Register from './pages/Register';
 import AuthProvider from './Auth/AuthProvider';
 import SendMoney from './pages/SendMoney';
 import CashOutForm from './pages/CashOutForm';
+import CashInForm from './pages/CashIn';
+import AllUserList from './pages/Admin/AllUserList';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +38,15 @@ const router = createBrowserRouter([
       {
         path: "/cashOut",
         element: <CashOutForm />
+      },
+      {
+        path: "/cashIn",
+        element: <CashInForm />
+      },
+
+      {
+        path: "/allUserList",
+        element: <AllUserList />
       },
     ]
 

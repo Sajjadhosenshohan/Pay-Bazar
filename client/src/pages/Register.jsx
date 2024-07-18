@@ -6,7 +6,7 @@ import { AuthContext } from "../Auth/AuthProvider";
 
 const Register = () => {
     const axiosPublic = useAxiosPublic();
-    const { user, setUser } = useContext(AuthContext);
+    const {  setUser } = useContext(AuthContext);
     const [role, setRole] = useState(null);
     const [status, setStatus] = useState(null);
 
@@ -31,6 +31,7 @@ const Register = () => {
         const email = form.email.value;
         const pin = form.pin.value;
         const phone = form.phone.value;
+        const balance = 0;
 
         const createData = {
             name,
@@ -38,7 +39,8 @@ const Register = () => {
             pin,
             phone,
             role,
-            status
+            status,
+            balance
         };
 
         console.log(createData);
@@ -49,7 +51,7 @@ const Register = () => {
             console.log(data);
             if (data.insertedId) {
                 // Call setUser with the new user info
-                await setUser({ name, email, phone });
+                await setUser({ name, email, phone,role,status,balance });
                 alert("User registered successfully");
                 // Swal.fire({
                 //     position: "center",
@@ -66,18 +68,18 @@ const Register = () => {
     };
 
     return (
-        <section className="dark:bg-gray-900">
+        <section className="bg-gray-200">
             <div className="flex justify-center items-center min-h-screen">
                 <div className="bg-gray-200 flex items-center w-full max-w-2xl p-8 mx-auto lg:px-12 lg:w-3/5">
                     <form onSubmit={handleSubmit} className="w-full">
-                        <h1 className="text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
+                        <h1 className="text-2xl font-semibold tracking-wider  capitalize ">
                             Get your free account now.
                         </h1>
-                        <p className="mt-4 text-gray-500 dark:text-gray-400">
+                        <p className="mt-4 ">
                             Let’s get you all set up so you can verify your personal account and begin setting up your profile.
                         </p>
                         <div className="mt-6">
-                            <h1 className="text-gray-500 dark:text-gray-300">Select type of account</h1>
+                            <h1 className="">Select type of account</h1>
                             <div className="mt-3 md:flex md:items-center justify-center ">
 
 
@@ -105,20 +107,20 @@ const Register = () => {
                         <div>
                             <div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Name</label>
-                                    <input name="name" type="text" placeholder="John" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm ">Name</label>
+                                    <input name="name" type="text" placeholder="John" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg    focus:border-blue-400  focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Pin</label>
-                                    <input name="pin" type="text" placeholder="pin number" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm ">Pin</label>
+                                    <input name="pin" type="text" placeholder="pin number" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg    focus:border-blue-400  focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Phone number</label>
-                                    <input name="phone" type="text" placeholder="XXX-XX-XXXX-XXX" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm ">Phone number</label>
+                                    <input name="phone" type="text" placeholder="XXX-XX-XXXX-XXX" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg    focus:border-blue-400  focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
                                 <div>
-                                    <label className="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email address</label>
-                                    <input name="email" type="email" placeholder="johnsnow@example.com" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                    <label className="block mb-2 text-sm ">Email address</label>
+                                    <input name="email" type="email" placeholder="johnsnow@example.com" className="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg    focus:border-blue-400  focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                                 </div>
                             </div>
                             <div className="flex items-center justify-center mt-6 w-full ">
