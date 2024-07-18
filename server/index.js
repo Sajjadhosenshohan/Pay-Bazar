@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const app = express();
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
 const port = process.env.PORT || 5000;
 
 const corsOptions = {
@@ -65,7 +65,42 @@ async function run() {
             const result = await usersCollection.find().toArray();
             res.send(result);
         });
-        
+
+
+        // for agent 
+        app.get('/Users', async (req, res) => {
+            const user = { role: "User" }
+            const result = await usersCollection.find(user).toArray();
+            res.send(result);
+        });
+
+        app.put('/CashIn', async (req, res) => {
+            const { agentPhone, userId } = req.body;
+
+            const user = await usersCollection.findOne({ _id: new ObjectId (userId) });
+            console.log(user)
+            const agent = await usersCollection.findOne({ phone: agentPhone });
+
+            if (user && agent && user.cashIn_request <= agent.balance) {
+                const newUserBalance = user.balance + user.cashIn_request;
+                const newAgentBalance = agent.balance - user.cashIn_request;
+
+                await usersCollection.updateOne(
+                    { _id: new ObjectId (userId) },
+                    { $set: { balance: newUserBalance, status: 'approved', cashIn_request: 0 } }
+                );
+
+                await usersCollection.updateOne(
+                    { phone: agentPhone },
+                    { $set: { balance: newAgentBalance } }
+                );
+
+                res.send({ message: 'Cash-in successful' });
+            } else {
+                res.status(400).send({ message: 'Insufficient balance or invalid request' });
+            }
+        });
+
 
         app.post('/sendMoney', async (req, res) => {
             const { recipientPhone, amount, senderPhone, pin } = req.body;
@@ -176,46 +211,46 @@ async function run() {
             res.status(200).json({ success: true, message: 'Cash out successful' });
         });
 
-        app.put('/cashIn', async (req, res) => {
-            const { amount, pin, phone, name, agentPhone } = req.body;
+        // app.put('/cashIn', async (req, res) => {
+        //     const { amount, pin, phone, name, agentPhone } = req.body;
 
-            const user = await usersCollection.findOne({ phone: phone, name: name });
-            if (!user) {
-                return res.status(404).json({ success: false, message: "User not found or invalid PIN." });
-            }
+        //     const user = await usersCollection.findOne({ phone: phone, name: name });
+        //     if (!user) {
+        //         return res.status(404).json({ success: false, message: "User not found or invalid PIN." });
+        //     }
 
-            if (user.pin !== pin) {
-                return res.status(401).json({ success: false, message: "Invalid PIN." });
-            }
+        //     if (user.pin !== pin) {
+        //         return res.status(401).json({ success: false, message: "Invalid PIN." });
+        //     }
 
-            const agent = await usersCollection.findOne({ phone: agentPhone, role: 'agent' });
-            if (!agent) {
-                return res.status(404).json({ success: false, message: "Agent not found." });
-            }
+        //     const agent = await usersCollection.findOne({ phone: agentPhone, role: 'agent' });
+        //     if (!agent) {
+        //         return res.status(404).json({ success: false, message: "Agent not found." });
+        //     }
 
-            if (agent.balance < amount) {
-                return res.status(400).json({ success: false, message: "Agent has insufficient balance." });
-            }
+        //     if (agent.balance < amount) {
+        //         return res.status(400).json({ success: false, message: "Agent has insufficient balance." });
+        //     }
 
-            // Assuming the agent approves the transaction
-            const agentApproval = true; // This would be an actual check in a real scenario
+        //     // Assuming the agent approves the transaction
+        //     const agentApproval = true; // This would be an actual check in a real scenario
 
-            if (agentApproval) {
-                await usersCollection.updateOne(
-                    { phone: phone },
-                    { $inc: { balance: amount } }
-                );
+        //     if (agentApproval) {
+        //         await usersCollection.updateOne(
+        //             { phone: phone },
+        //             { $inc: { balance: amount } }
+        //         );
 
-                await usersCollection.updateOne(
-                    { phone: agent.phone },
-                    { $inc: { balance: -amount } }
-                );
+        //         await usersCollection.updateOne(
+        //             { phone: agent.phone },
+        //             { $inc: { balance: -amount } }
+        //         );
 
-                res.status(200).json({ success: true, message: 'Cash in successful' });
-            } else {
-                res.status(403).json({ success: false, message: 'Agent did not approve the transaction' });
-            }
-        });
+        //         res.status(200).json({ success: true, message: 'Cash in successful' });
+        //     } else {
+        //         res.status(403).json({ success: false, message: 'Agent did not approve the transaction' });
+        //     }
+        // });
 
 
 

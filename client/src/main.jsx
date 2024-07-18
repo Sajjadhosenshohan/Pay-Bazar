@@ -15,6 +15,7 @@ import SendMoney from './pages/SendMoney';
 import CashOutForm from './pages/CashOutForm';
 import CashInForm from './pages/CashIn';
 import AllUserList from './pages/Admin/AllUserList';
+import BalanceRequest from './pages/Agent/BalanceRequest';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "/allUserList",
         element: <AllUserList />
+      },
+      {
+        path: "/balanceRequest",
+        element: <BalanceRequest />
       },
     ]
 

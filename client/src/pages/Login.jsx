@@ -1,7 +1,11 @@
+import { useContext } from "react";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
+import { AuthContext } from "../Auth/AuthProvider";
 
 const Login = () => {
     const axiosPublic = useAxiosPublic();
+    const { setUser } = useContext(AuthContext)
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -9,7 +13,7 @@ const Login = () => {
         const identifier = form.identifier.value;
         const pin = form.pin.value;
 
-        console.log(identifier,pin)
+        console.log(identifier, pin)
 
         try {
             const { data } = await axiosPublic.get('/singleUser', {
@@ -19,7 +23,7 @@ const Login = () => {
                 },
             });
 
-            console.log(data);
+            setUser(data);
             if (data) {
                 alert("Login successful");
                 // Swal.fire({
@@ -46,6 +50,8 @@ const Login = () => {
                         <h1 className="text-2xl font-semibold tracking-wider text-gray-800 capitalize text-white">
                             Login
                         </h1>
+
+
 
                         <p className="mt-4 text-gray-500 text-gray-400">
                             Let’s get you all set up so you can verify your personal account and begin setting up your profile.
