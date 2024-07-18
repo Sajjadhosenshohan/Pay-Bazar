@@ -2,7 +2,7 @@ const express = require('express');
 require('dotenv').config();
 const app = express();
 const cors = require('cors');
-const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 const corsOptions = {
@@ -77,7 +77,7 @@ async function run() {
         app.put('/CashIn', async (req, res) => {
             const { agentPhone, userId } = req.body;
 
-            const user = await usersCollection.findOne({ _id: new ObjectId (userId) });
+            const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
             console.log(user)
             const agent = await usersCollection.findOne({ phone: agentPhone });
 
@@ -86,7 +86,7 @@ async function run() {
                 const newAgentBalance = agent.balance - user.cashIn_request;
 
                 await usersCollection.updateOne(
-                    { _id: new ObjectId (userId) },
+                    { _id: new ObjectId(userId) },
                     { $set: { balance: newUserBalance, status: 'approved', cashIn_request: 0 } }
                 );
 
@@ -211,46 +211,35 @@ async function run() {
             res.status(200).json({ success: true, message: 'Cash out successful' });
         });
 
-        // app.put('/cashIn', async (req, res) => {
-        //     const { amount, pin, phone, name, agentPhone } = req.body;
+        app.patch('/CashInUserRequest', async (req, res) => {
+            const { amount, pin, phone, name, agentPhone } = req.body;
 
-        //     const user = await usersCollection.findOne({ phone: phone, name: name });
-        //     if (!user) {
-        //         return res.status(404).json({ success: false, message: "User not found or invalid PIN." });
-        //     }
+            const user = await usersCollection.findOne({ phone: phone});
+            if (!user) {
+                return res.status(404).json({ success: false, message: "User not found or invalid PIN." });
+            }
 
-        //     if (user.pin !== pin) {
-        //         return res.status(401).json({ success: false, message: "Invalid PIN." });
-        //     }
+            if (user.pin !== pin) {
+                return res.status(401).json({ success: false, message: "Invalid PIN." });
+            }
 
-        //     const agent = await usersCollection.findOne({ phone: agentPhone, role: 'agent' });
-        //     if (!agent) {
-        //         return res.status(404).json({ success: false, message: "Agent not found." });
-        //     }
 
-        //     if (agent.balance < amount) {
-        //         return res.status(400).json({ success: false, message: "Agent has insufficient balance." });
-        //     }
+            // Calculate the new cashIn_request value
+            const requestAmount = parseInt(amount);
+            const newCashInRequest = (parseInt(user.cashIn_request) || 0) + requestAmount;
 
-        //     // Assuming the agent approves the transaction
-        //     const agentApproval = true; // This would be an actual check in a real scenario
-
-        //     if (agentApproval) {
-        //         await usersCollection.updateOne(
-        //             { phone: phone },
-        //             { $inc: { balance: amount } }
-        //         );
-
-        //         await usersCollection.updateOne(
-        //             { phone: agent.phone },
-        //             { $inc: { balance: -amount } }
-        //         );
-
-        //         res.status(200).json({ success: true, message: 'Cash in successful' });
-        //     } else {
-        //         res.status(403).json({ success: false, message: 'Agent did not approve the transaction' });
-        //     }
-        // });
+            // Update the user's cashIn_request and status
+            const query = { phone: phone };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: "pending",
+                    cashIn_request: newCashInRequest
+                }
+            };
+            const result = await usersCollection.updateOne(query, updateDoc, options)
+            res.send(result)
+        });
 
 
 

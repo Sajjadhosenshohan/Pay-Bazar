@@ -27,7 +27,7 @@ const BalanceRequest = () => {
 
     const handleCashIn = async (userId) => {
         try {
-            const response = await axiosPublic.put(`/CashIn`, { userId, agentPhone });
+            const response = await axiosPublic.put(`/CashInUserRequest`, { userId, agentPhone });
             alert(response.data);
             console.log(`my error res ${response.data}`)
         } catch (error) {
